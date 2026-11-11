@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wedding QR Experience</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Welcome section -->
+        <div id="welcomeSection">
+
+            <h1>Welcome to Our Special Day!</h1>
+
+            <p>We are delighted to have you celebrate with us.</p>
+
+            <video id="welcomeVideo" autoplay playsinline controls width="100%">
+                <source src="welcome_video.mp4" type="video/mp4">
+                Your browser does not support this video.
+            </video>
+
+            <button id="mapBtn">
+                Navigate to Wedding Venue 📍
+            </button>
+
+        </div>
+
+        <!-- Thank-you section (hidden initially) -->
+        <div id="thankYouSection" style="display: none;">
+
+            <h2>Thank You for Celebrating With Us! ❤️</h2>
+
+            <video id="thankYouVideo" controls width="100%" playsinline>
+                <source src="thankyou_video.mp4" type="video/mp4">
+                Your browser does not support this video.
+            </video>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

@@ -20,7 +20,7 @@ const venueLat = 12.510803;
 const venueLng = 76.877504;
 
 // Distance in metres to consider the guest arrived
-const arrivalDistance = 100;
+const arrivalDistance = 30;
 
 // TEMPORARY TEST MODE
 // Change to false after testing

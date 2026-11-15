@@ -5,7 +5,20 @@ const mapBtn = document.getElementById("mapBtn");
 // Wedding venue address
 const venue = "Gowrishankara Kalyana Mantapa, KT99/A 5th Cross, Bannur Main Rd, Marigowda Layout, PES Kyathengere Layout, Kyathumgere, Karnataka 571401";
 
-// Open Google Maps when the guest clicks
+// Wedding venue coordinates
+const venueLat = 12.510803;
+const venueLng = 76.877504;
+
+// Arrival distance in metres
+const arrivalDistance = 50;
+
+// Test mode OFF
+const testMode = false;
+
+// Track whether arrival has been detected
+let arrived = false;
+
+// Open Google Maps
 mapBtn.addEventListener("click", function() {
 
     const mapUrl = "https://www.google.com/maps/dir/?api=1&destination="
@@ -14,17 +27,6 @@ mapBtn.addEventListener("click", function() {
     window.open(mapUrl, "_blank");
 
 });
-
-// Wedding venue coordinates
-const venueLat = 12.510803;
-const venueLng = 76.877504;
-
-// Distance in metres to consider the guest arrived
-const arrivalDistance = 30;
-
-// TEMPORARY TEST MODE
-// Change to false after testing
-const testMode = false;
 
 // Calculate distance between two locations
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -49,28 +51,28 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 // Show thank-you section
 function showThankYouSection() {
 
+    if (arrived) return;
+
+    arrived = true;
+
     const welcome = document.getElementById("welcomeSection");
     const section = document.getElementById("thankYouSection");
     const video = document.getElementById("thankYouVideo");
 
-    // Hide welcome section
     welcome.style.display = "none";
-
-    // Show thank-you section
     section.style.display = "block";
 
-    // Attempt to play thank-you video
     video.play().catch(function() {
-        console.log("Guest may need to press Play.");
+        console.log("Browser blocked autoplay. Guest may need to press Play.");
     });
 }
 
-// Check guest location
-let watchId;
+// Check current location
+function checkGuestLocation() {
 
-if ("geolocation" in navigator) {
+    if (arrived || !navigator.geolocation) return;
 
-    watchId = navigator.geolocation.watchPosition(
+    navigator.geolocation.getCurrentPosition(
 
         function(position) {
 
@@ -90,27 +92,36 @@ if ("geolocation" in navigator) {
                 "metres"
             );
 
-            // Temporary test or actual arrival detection
             if (testMode || distance <= arrivalDistance) {
-
                 showThankYouSection();
-
-                navigator.geolocation.clearWatch(watchId);
             }
         },
 
         function(error) {
-            console.log(
-                "Location permission or location error:",
-                error.message
-            );
+            console.log("Location error:", error.message);
         },
 
         {
             enableHighAccuracy: true,
-            maximumAge: 10000,
-            timeout: 15000
+            maximumAge: 0,
+            timeout: 20000
         }
     );
-
 }
+
+// Initial location check
+checkGuestLocation();
+
+// Check location when guest returns to Qrinova
+document.addEventListener("visibilitychange", function() {
+
+    if (document.visibilityState === "visible") {
+        checkGuestLocation();
+    }
+
+});
+
+// Also check when the browser restores the page
+window.addEventListener("pageshow", function() {
+    checkGuestLocation();
+});

@@ -7,11 +7,11 @@
 const mapBtn = document.getElementById("mapBtn");
 
 // Wedding venue address
-const venue = "Gowrishankara Kalyana Mantapa, KT99/A 5th Cross, Bannur Main Rd, Marigowda Layout, PES Kyathengere Layout, Kyathumgere, Karnataka 571401";
+const venue = "8MGX+4V3 VTU PG Studies MCA, MBA and MTech, Sathgalli, Rammanahalli, Karnataka 570029";
 
 // Actual wedding venue coordinates
-const venueLat = 12.510803;
-const venueLng = 76.877504;
+const venueLat = 12.325804;
+const venueLng = 76.699837;
 
 // Arrival detection distance
 const arrivalDistance = 50;

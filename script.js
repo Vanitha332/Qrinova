@@ -6,36 +6,90 @@
 // Navigation button
 const mapBtn = document.getElementById("mapBtn");
 
-// Wedding venue address
+// Wedding destination
 const venue = "8MGX+4V3 VTU PG Studies MCA, MBA and MTech, Sathgalli, Rammanahalli, Karnataka 570029";
 
-// Actual wedding venue coordinates
+// Exact destination coordinates
 const venueLat = 12.325804;
 const venueLng = 76.699837;
 
-// Arrival detection distance
+// Arrival radius
 const arrivalDistance = 50;
 
-// Prevent repeated arrival detection
+// Save arrival separately for this wedding destination
+const arrivalKey = "qrinova_vtu_pg_arrived";
+
+// Tracking variables
 let arrived = false;
 let watchId = null;
-let checkingLocation = false;
 
 
 // ==========================================
-// OPEN GOOGLE MAPS
+// SHOW THANK-YOU SECTION
 // ==========================================
 
-mapBtn.addEventListener("click", function() {
+function showThankYouSection() {
 
-    const mapUrl =
-        "https://www.google.com/maps/dir/?api=1&destination="
-        + encodeURIComponent(venue);
+    if (arrived) return;
 
-    // Open Maps using the same browser tab
-    window.location.href = mapUrl;
+    arrived = true;
 
-});
+    // Remember confirmed arrival on this device
+    localStorage.setItem(arrivalKey, "true");
+
+    stopLocationTracking();
+
+    const welcome = document.getElementById("welcomeSection");
+    const thankYou = document.getElementById("thankYouSection");
+
+    const welcomeVideo = document.getElementById("welcomeVideo");
+
+    if (!welcome || !thankYou) {
+        console.error("Welcome or thank-you section not found.");
+        return;
+    }
+
+    // Stop welcome video
+    if (welcomeVideo) {
+        welcomeVideo.pause();
+    }
+
+    // Switch sections
+    welcome.style.display = "none";
+    thankYou.style.display = "block";
+
+    // Do not autoplay the thank-you video.
+    // Guest can press its Play button.
+
+    console.log("Arrival confirmed. Thank-you section displayed.");
+}
+
+
+// ==========================================
+// RESTORE PREVIOUSLY CONFIRMED ARRIVAL
+// ==========================================
+
+function restoreArrival() {
+
+    if (localStorage.getItem(arrivalKey) === "true") {
+        arrived = true;
+
+        stopLocationTracking();
+
+        const welcome = document.getElementById("welcomeSection");
+        const thankYou = document.getElementById("thankYouSection");
+
+        if (welcome && thankYou) {
+            welcome.style.display = "none";
+            thankYou.style.display = "block";
+        }
+
+        console.log("Previously confirmed arrival restored.");
+        return true;
+    }
+
+    return false;
+}
 
 
 // ==========================================
@@ -63,49 +117,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 
 // ==========================================
-// SHOW THANK-YOU VIDEO
-// ==========================================
-
-function showThankYouSection() {
-
-    if (arrived) return;
-
-    arrived = true;
-
-    // Stop location tracking
-    if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-    }
-
-    const welcome = document.getElementById("welcomeSection");
-    const section = document.getElementById("thankYouSection");
-
-    const welcomeVideo = document.getElementById("welcomeVideo");
-    const thankYouVideo = document.getElementById("thankYouVideo");
-
-    // Stop welcome video
-    if (welcomeVideo) {
-        welcomeVideo.pause();
-    }
-
-    // Change displayed section
-    welcome.style.display = "none";
-    section.style.display = "block";
-
-    // Start thank-you video
-    thankYouVideo.play().catch(function(error) {
-        console.log(
-            "Automatic video playback was blocked:",
-            error
-        );
-    });
-
-}
-
-
-// ==========================================
-// PROCESS GUEST LOCATION
+// CHECK GUEST LOCATION
 // ==========================================
 
 function processLocation(position) {
@@ -115,6 +127,8 @@ function processLocation(position) {
     const guestLat = position.coords.latitude;
     const guestLng = position.coords.longitude;
 
+    const accuracy = position.coords.accuracy;
+
     const distance = calculateDistance(
         guestLat,
         guestLng,
@@ -122,80 +136,40 @@ function processLocation(position) {
         venueLng
     );
 
-    console.log(
-        "Distance from wedding venue:",
-        Math.round(distance),
-        "metres"
-    );
-
-    console.log(
-        "GPS accuracy:",
-        Math.round(position.coords.accuracy),
-        "metres"
-    );
+    console.log("Distance from venue:", Math.round(distance), "metres");
+    console.log("GPS accuracy:", Math.round(accuracy), "metres");
 
     if (distance <= arrivalDistance) {
         showThankYouSection();
     }
-
 }
 
 
 // ==========================================
-// CHECK LOCATION ONCE
+// STOP LOCATION TRACKING
 // ==========================================
 
-function checkGuestLocation() {
+function stopLocationTracking() {
 
-    if (arrived || checkingLocation) return;
-
-    if (!navigator.geolocation) {
-        console.log("Geolocation is not supported.");
-        return;
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
     }
-
-    checkingLocation = true;
-
-    navigator.geolocation.getCurrentPosition(
-
-        function(position) {
-
-            checkingLocation = false;
-            processLocation(position);
-
-        },
-
-        function(error) {
-
-            checkingLocation = false;
-
-            console.log(
-                "Location error:",
-                error.message
-            );
-
-        },
-
-        {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 20000
-        }
-
-    );
-
 }
 
 
 // ==========================================
-// CONTINUOUS LOCATION TRACKING
+// START LOCATION TRACKING
 // ==========================================
 
 function startLocationTracking() {
 
     if (arrived || watchId !== null) return;
 
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+        console.error("This browser does not support GPS location.");
+        return;
+    }
 
     watchId = navigator.geolocation.watchPosition(
 
@@ -204,61 +178,87 @@ function startLocationTracking() {
         },
 
         function(error) {
-            console.log(
-                "Location tracking error:",
-                error.message
-            );
+            console.error("GPS error:", error.message);
         },
 
         {
             enableHighAccuracy: true,
-            maximumAge: 5000,
-            timeout: 20000
+            maximumAge: 0,
+            timeout: 30000
         }
-
     );
 
+    console.log("Qrinova GPS tracking started.");
 }
 
 
 // ==========================================
-// INITIAL LOCATION CHECK
+// REFRESH LOCATION WHEN RETURNING
 // ==========================================
 
-checkGuestLocation();
-startLocationTracking();
+function refreshLocation() {
+
+    if (restoreArrival()) return;
+
+    // Restart GPS tracking
+    stopLocationTracking();
+    startLocationTracking();
+}
 
 
 // ==========================================
-// CHECK WHEN GUEST RETURNS TO QRINOVA
+// OPEN GOOGLE MAPS
+// ==========================================
+
+mapBtn.addEventListener("click", function() {
+
+    const mapUrl =
+        "https://www.google.com/maps/dir/?api=1&destination="
+        + encodeURIComponent(venue);
+
+    // Open Maps in the same tab
+    window.location.href = mapUrl;
+
+});
+
+
+// ==========================================
+// INITIAL PAGE LOAD
+// ==========================================
+
+if (!restoreArrival()) {
+    startLocationTracking();
+}
+
+
+// ==========================================
+// WHEN GUEST RETURNS TO QRINOVA
 // ==========================================
 
 document.addEventListener("visibilitychange", function() {
 
-    if (document.visibilityState === "visible") {
-
-        checkGuestLocation();
-
-        if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-        }
-
-        startLocationTracking();
-
+    if (document.visibilityState === "hidden") {
+        stopLocationTracking();
+    } else {
+        refreshLocation();
     }
 
 });
 
 
 // ==========================================
-// CHECK WHEN BROWSER RESTORES THE PAGE
+// WHEN BROWSER RESTORES THE PAGE
 // ==========================================
 
 window.addEventListener("pageshow", function() {
+    refreshLocation();
+});
 
-    checkGuestLocation();
 
-    startLocationTracking();
+// ==========================================
+// WHEN GUEST LEAVES THE PAGE
+// ==========================================
 
+window.addEventListener("pagehide", function() {
+    stopLocationTracking();
 });

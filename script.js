@@ -22,7 +22,34 @@ const arrivalKey = "qrinova_vtu_pg_arrived";
 // Tracking variables
 let arrived = false;
 let watchId = null;
+// ==========================================
+// TEMPORARY GPS DIAGNOSTIC DISPLAY
+// ==========================================
 
+let debugPanel = null;
+
+function showDebug(message) {
+
+    if (!debugPanel) {
+
+        debugPanel = document.createElement("div");
+
+        debugPanel.style.background = "#f1f5ff";
+        debugPanel.style.color = "#222";
+        debugPanel.style.padding = "15px";
+        debugPanel.style.marginTop = "20px";
+        debugPanel.style.borderRadius = "12px";
+        debugPanel.style.textAlign = "left";
+        debugPanel.style.whiteSpace = "pre-line";
+        debugPanel.style.fontSize = "14px";
+
+        document.querySelector(".container").appendChild(debugPanel);
+    }
+
+    debugPanel.textContent = "QRINOVA GPS TEST\n\n" + message;
+}
+
+showDebug("Waiting for GPS location...");
 
 // ==========================================
 // SHOW THANK-YOU SECTION
@@ -140,6 +167,16 @@ function processLocation(position) {
     console.log("GPS accuracy:", Math.round(accuracy), "metres");
 
     if (distance <= arrivalDistance) {
+        showDebug(
+    "GPS: Active\n" +
+    "Distance: " + Math.round(distance) + " metres\n" +
+    "Accuracy: " + Math.round(accuracy) + " metres\n" +
+    "Arrival radius: " + arrivalDistance + " metres\n" +
+    "Status: " +
+    (distance <= arrivalDistance
+        ? "Within arrival radius"
+        : "Outside arrival radius")
+);
         showThankYouSection();
     }
 }

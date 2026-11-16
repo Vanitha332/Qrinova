@@ -1,65 +1,392 @@
 
-/* Remove default browser spacing */
+/* ==========================================
+   QRINOVA - ROMANTIC WEDDING DESIGN
+========================================== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+/* ==========================================
+   GLOBAL DESIGN
+========================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Page background */
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ffe4ec, #f4e5ff);
     min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+
+    background:
+        radial-gradient(circle at top left, #ffe0eb, transparent 35%),
+        radial-gradient(circle at bottom right, #fbd5e5, transparent 35%),
+        linear-gradient(135deg, #fff8fb, #fff0f5, #ffffff);
+
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+
+    padding: 35px 15px;
+    overflow-x: hidden;
+    position: relative;
 }
 
-/* Main content box */
+
+/* ==========================================
+   FLOWERS AROUND THE PAGE
+========================================== */
+
+body::before {
+    content: "🌸\A 🌷\A 🌺\A 🌼\A 🌸\A 🌷\A 🌺\A 🌼";
+
+    white-space: pre;
+    position: fixed;
+
+    left: 12px;
+    top: 5%;
+
+    font-size: 30px;
+    line-height: 2.1;
+
+    opacity: 0.75;
+    pointer-events: none;
+
+    animation: flowerFloat 5s ease-in-out infinite alternate;
+
+    z-index: 0;
+}
+
+body::after {
+    content: "🌷\A 🌸\A 🌼\A 🌺\A 🌷\A 🌸\A 🌼\A 🌺";
+
+    white-space: pre;
+    position: fixed;
+
+    right: 12px;
+    top: 5%;
+
+    font-size: 30px;
+    line-height: 2.1;
+
+    opacity: 0.75;
+    pointer-events: none;
+
+    animation: flowerFloat 6s ease-in-out infinite alternate-reverse;
+
+    z-index: 0;
+}
+
+
+/* ==========================================
+   MAIN CONTAINER
+========================================== */
+
 .container {
-    background: white;
+    position: relative;
+    z-index: 2;
+
     width: 100%;
-    max-width: 450px;
-    padding: 30px;
-    border-radius: 20px;
+    max-width: 650px;
+
+    padding: 40px 30px;
+
+    background: rgba(255, 255, 255, 0.88);
+
+    border: 2px solid #ffd2e2;
+    border-radius: 28px;
+
+    box-shadow:
+        0 15px 45px rgba(214, 105, 145, 0.16),
+        0 0 25px rgba(255, 182, 193, 0.15);
+
     text-align: center;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+
+    animation: pageAppear 1.2s ease;
 }
 
-/* Heading */
+
+/* ==========================================
+   WELCOME HEADING
+========================================== */
+
 h1 {
-    color: #c04478;
+    font-family: 'Great Vibes', cursive;
+
+    font-size: 48px;
+    font-weight: normal;
+
+    color: #c64d7b;
+
     margin-bottom: 15px;
+
+    text-shadow: 2px 3px 8px rgba(255, 150, 190, 0.25);
 }
 
-/* Welcome message */
+
+/* ==========================================
+   THANK YOU HEADING
+========================================== */
+
+h2 {
+    font-family: 'Great Vibes', cursive;
+
+    font-size: 43px;
+    font-weight: normal;
+
+    color: #c64d7b;
+
+    margin-bottom: 20px;
+}
+
+
+/* ==========================================
+   PARAGRAPH
+========================================== */
+
 p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 20px;
+    color: #795563;
+
+    font-size: 15px;
+    line-height: 1.8;
+
+    margin-bottom: 25px;
 }
 
-/* Video */
+
+/* ==========================================
+   VIDEO DESIGN
+========================================== */
+
 video {
-    border-radius: 12px;
-    margin-bottom: 20px;
+    display: block;
+
+    width: 100%;
+    max-height: 360px;
+
+    object-fit: contain;
+
+    background: #fff0f5;
+
+    border: 4px solid #f7c2d5;
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(198, 77, 123, 0.18);
+
+    margin: 20px auto;
 }
 
-/* Navigation button */
+
+/* ==========================================
+   NAVIGATION BUTTON
+========================================== */
+
 button {
-    background: #c04478;
+    display: inline-block;
+
+    margin-top: 22px;
+    padding: 15px 28px;
+
+    background: linear-gradient(135deg, #e978a1, #c94f80);
+
     color: white;
+
     border: none;
-    padding: 14px 20px;
-    border-radius: 30px;
-    font-size: 16px;
+    border-radius: 50px;
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+
     cursor: pointer;
-    width: 100%;
+
+    box-shadow: 0 7px 20px rgba(201, 79, 128, 0.3);
+
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background: #9f2e60;
+    transform: translateY(-4px);
+
+    background: linear-gradient(135deg, #d85d8d, #b93c70);
+
+    box-shadow: 0 10px 25px rgba(201, 79, 128, 0.4);
 }
 
+button:active {
+    transform: scale(0.96);
+}
+
+
+/* ==========================================
+   FLOATING HEART DECORATION
+========================================== */
+
+.container::before {
+    content: "♡  ♥  ♡  ♥  ♡";
+
+    display: block;
+
+    color: #ed8bab;
+
+    font-size: 23px;
+    letter-spacing: 10px;
+
+    margin-bottom: 18px;
+
+    animation: heartBeat 2s ease-in-out infinite;
+}
+
+.container::after {
+    content: "🌸  💗  🌸";
+
+    display: block;
+
+    font-size: 23px;
+
+    margin-top: 25px;
+
+    animation: heartBeat 2.5s ease-in-out infinite;
+}
+
+
+/* ==========================================
+   FLOWER ANIMATION
+========================================== */
+
+@keyframes flowerFloat {
+
+    from {
+        transform: translateY(0px) rotate(-5deg);
+    }
+
+    to {
+        transform: translateY(18px) rotate(5deg);
+    }
+}
+
+
+/* ==========================================
+   HEART ANIMATION
+========================================== */
+
+@keyframes heartBeat {
+
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+
+/* ==========================================
+   PAGE APPEAR ANIMATION
+========================================== */
+
+@keyframes pageAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================
+   GPS DIAGNOSTIC BOX
+   TEMPORARY - FOR TESTING ONLY
+========================================== */
+
+.container > div[style*="background: rgb(241"] {
+    position: relative;
+    z-index: 3;
+    border: 1px solid #e9bfd0;
+    border-radius: 15px;
+}
+
+
+/* ==========================================
+   MOBILE RESPONSIVE DESIGN
+========================================== */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 25px 12px;
+    }
+
+    .container {
+        padding: 30px 18px;
+        border-radius: 22px;
+    }
+
+    h1 {
+        font-size: 39px;
+    }
+
+    h2 {
+        font-size: 35px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+
+    video {
+        max-height: 260px;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px 15px;
+        font-size: 14px;
+    }
+
+    body::before,
+    body::after {
+        font-size: 20px;
+        line-height: 2.5;
+        opacity: 0.55;
+    }
+
+    .container::before {
+        font-size: 19px;
+        letter-spacing: 6px;
+    }
+
+    .container::after {
+        font-size: 19px;
+    }
+}
+
+
+/* ==========================================
+   SMALL MOBILE SCREENS
+========================================== */
+
+@media (max-width: 360px) {
+
+    h1 {
+        font-size: 33px;
+    }
+
+    h2 {
+        font-size: 30px;
+    }
+
+    .container {
+        padding: 25px 14px;
+    }
+}

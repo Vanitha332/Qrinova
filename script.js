@@ -13,15 +13,17 @@ const venue = "8MGX+4V3 VTU PG Studies MCA, MBA and MTech, Sathgalli, Rammanahal
 const venueLat = 12.325804;
 const venueLng = 76.699837;
 
-// Arrival radius
+// Arrival radius in metres
 const arrivalDistance = 50;
 
-// Save arrival separately for this wedding destination
+// Save arrival for this wedding destination
 const arrivalKey = "qrinova_vtu_pg_arrived";
 
 // Tracking variables
 let arrived = false;
 let watchId = null;
+
+
 // ==========================================
 // TEMPORARY GPS DIAGNOSTIC DISPLAY
 // ==========================================
@@ -51,6 +53,21 @@ function showDebug(message) {
 
 showDebug("Waiting for GPS location...");
 
+
+// ==========================================
+// STOP LOCATION TRACKING
+// ==========================================
+
+function stopLocationTracking() {
+
+    if (watchId !== null && navigator.geolocation) {
+
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+    }
+}
+
+
 // ==========================================
 // SHOW THANK-YOU SECTION
 // ==========================================
@@ -62,7 +79,11 @@ function showThankYouSection() {
     arrived = true;
 
     // Remember confirmed arrival on this device
-    localStorage.setItem(arrivalKey, "true");
+    try {
+        localStorage.setItem(arrivalKey, "true");
+    } catch (error) {
+        console.error("Could not save arrival:", error);
+    }
 
     stopLocationTracking();
 
@@ -85,8 +106,7 @@ function showThankYouSection() {
     welcome.style.display = "none";
     thankYou.style.display = "block";
 
-    // Do not autoplay the thank-you video.
-    // Guest can press its Play button.
+    // Thank-you video remains manual play
 
     console.log("Arrival confirmed. Thank-you section displayed.");
 }
@@ -98,7 +118,16 @@ function showThankYouSection() {
 
 function restoreArrival() {
 
-    if (localStorage.getItem(arrivalKey) === "true") {
+    let savedArrival = false;
+
+    try {
+        savedArrival = localStorage.getItem(arrivalKey) === "true";
+    } catch (error) {
+        console.error("Could not read saved arrival:", error);
+    }
+
+    if (savedArrival) {
+
         arrived = true;
 
         stopLocationTracking();
@@ -107,11 +136,13 @@ function restoreArrival() {
         const thankYou = document.getElementById("thankYouSection");
 
         if (welcome && thankYou) {
+
             welcome.style.display = "none";
             thankYou.style.display = "block";
         }
 
         console.log("Previously confirmed arrival restored.");
+
         return true;
     }
 
@@ -120,7 +151,7 @@ function restoreArrival() {
 
 
 // ==========================================
-// CALCULATE DISTANCE
+// CALCULATE DISTANCE BETWEEN TWO LOCATIONS
 // ==========================================
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -144,7 +175,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 
 // ==========================================
-// CHECK GUEST LOCATION
+// PROCESS GPS LOCATION
 // ==========================================
 
 function processLocation(position) {
@@ -163,35 +194,64 @@ function processLocation(position) {
         venueLng
     );
 
+    console.log("Guest latitude:", guestLat);
+    console.log("Guest longitude:", guestLng);
     console.log("Distance from venue:", Math.round(distance), "metres");
     console.log("GPS accuracy:", Math.round(accuracy), "metres");
 
+    showDebug(
+        "GPS: Active\n" +
+        "Latitude: " + guestLat + "\n" +
+        "Longitude: " + guestLng + "\n" +
+        "Distance: " + Math.round(distance) + " metres\n" +
+        "Accuracy: " + Math.round(accuracy) + " metres\n" +
+        "Arrival radius: " + arrivalDistance + " metres\n" +
+        "Status: " +
+        (distance <= arrivalDistance
+            ? "Within arrival radius"
+            : "Outside arrival radius")
+    );
+
     if (distance <= arrivalDistance) {
-        showDebug(
-    "GPS: Active\n" +
-    "Distance: " + Math.round(distance) + " metres\n" +
-    "Accuracy: " + Math.round(accuracy) + " metres\n" +
-    "Arrival radius: " + arrivalDistance + " metres\n" +
-    "Status: " +
-    (distance <= arrivalDistance
-        ? "Within arrival radius"
-        : "Outside arrival radius")
-);
+
         showThankYouSection();
     }
 }
 
 
 // ==========================================
-// STOP LOCATION TRACKING
+// HANDLE GPS ERRORS
 // ==========================================
 
-function stopLocationTracking() {
+function handleLocationError(error) {
 
-    if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
+    console.error("GPS error:", error.code, error.message);
+
+    let errorMessage = "";
+
+    if (error.code === 1) {
+
+        errorMessage = "Permission denied. Allow location access in Chrome.";
+
+    } else if (error.code === 2) {
+
+        errorMessage = "Position unavailable. Phone could not obtain GPS location.";
+
+    } else if (error.code === 3) {
+
+        errorMessage = "GPS request timed out. Waiting for another location result.";
+
+    } else {
+
+        errorMessage = "Unknown GPS error: " + error.message;
     }
+
+    showDebug(
+        "GPS: ERROR\n\n" +
+        errorMessage +
+        "\n\nError code: " + error.code +
+        "\n\nWaiting for another location update..."
+    );
 }
 
 
@@ -204,18 +264,26 @@ function startLocationTracking() {
     if (arrived || watchId !== null) return;
 
     if (!navigator.geolocation) {
-        console.error("This browser does not support GPS location.");
+
+        showDebug("GPS ERROR\n\nThis browser does not support location services.");
+
+        console.error("Geolocation is not supported.");
+
         return;
     }
+
+    showDebug("Waiting for GPS location...");
 
     watchId = navigator.geolocation.watchPosition(
 
         function(position) {
+
             processLocation(position);
         },
 
         function(error) {
-            console.error("GPS error:", error.message);
+
+            handleLocationError(error);
         },
 
         {
@@ -230,15 +298,15 @@ function startLocationTracking() {
 
 
 // ==========================================
-// REFRESH LOCATION WHEN RETURNING
+// REFRESH LOCATION WHEN RETURNING TO PAGE
 // ==========================================
 
 function refreshLocation() {
 
     if (restoreArrival()) return;
 
-    // Restart GPS tracking
     stopLocationTracking();
+
     startLocationTracking();
 }
 
@@ -250,8 +318,8 @@ function refreshLocation() {
 mapBtn.addEventListener("click", function() {
 
     const mapUrl =
-        "https://www.google.com/maps/dir/?api=1&destination="
-        + encodeURIComponent(venue);
+        "https://www.google.com/maps/dir/?api=1&destination=" +
+        encodeURIComponent(venue);
 
     // Open Maps in the same tab
     window.location.href = mapUrl;
@@ -264,6 +332,7 @@ mapBtn.addEventListener("click", function() {
 // ==========================================
 
 if (!restoreArrival()) {
+
     startLocationTracking();
 }
 
@@ -275,8 +344,11 @@ if (!restoreArrival()) {
 document.addEventListener("visibilitychange", function() {
 
     if (document.visibilityState === "hidden") {
+
         stopLocationTracking();
+
     } else {
+
         refreshLocation();
     }
 
@@ -288,6 +360,7 @@ document.addEventListener("visibilitychange", function() {
 // ==========================================
 
 window.addEventListener("pageshow", function() {
+
     refreshLocation();
 });
 
@@ -297,5 +370,6 @@ window.addEventListener("pageshow", function() {
 // ==========================================
 
 window.addEventListener("pagehide", function() {
+
     stopLocationTracking();
 });

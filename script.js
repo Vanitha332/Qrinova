@@ -14,10 +14,7 @@ const venueLat = 12.325804;
 const venueLng = 76.699837;
 
 // Arrival radius in metres
-const arrivalDistance = 50;
-
-// Save arrival for this wedding destination
-const arrivalKey = "qrinova_vtu_pg_arrived";
+const arrivalDistance = 100;
 
 // Tracking variables
 let arrived = false;
@@ -25,33 +22,44 @@ let watchId = null;
 
 
 // ==========================================
-// TEMPORARY GPS DIAGNOSTIC DISPLAY
+// GET PAGE ELEMENTS
 // ==========================================
 
-let debugPanel = null;
+const welcome = document.getElementById("welcomeSection");
+const thankYou = document.getElementById("thankYouSection");
 
-function showDebug(message) {
+const welcomeVideo = document.getElementById("welcomeVideo");
+const thankYouVideo = document.getElementById("thankYouVideo");
 
-    if (!debugPanel) {
 
-        debugPanel = document.createElement("div");
+// ==========================================
+// RESET FOR EVERY FRESH PAGE LOAD
+// ==========================================
 
-        debugPanel.style.background = "#f1f5ff";
-        debugPanel.style.color = "#222";
-        debugPanel.style.padding = "15px";
-        debugPanel.style.marginTop = "20px";
-        debugPanel.style.borderRadius = "12px";
-        debugPanel.style.textAlign = "left";
-        debugPanel.style.whiteSpace = "pre-line";
-        debugPanel.style.fontSize = "14px";
+function resetExperience() {
 
-        document.querySelector(".container").appendChild(debugPanel);
+    arrived = false;
+
+    if (welcome) {
+        welcome.style.display = "block";
     }
 
-    debugPanel.textContent = "QRINOVA GPS TEST\n\n" + message;
+    if (thankYou) {
+        thankYou.style.display = "none";
+    }
+
+    if (welcomeVideo) {
+        welcomeVideo.pause();
+        welcomeVideo.currentTime = 0;
+    }
+
+    if (thankYouVideo) {
+        thankYouVideo.pause();
+        thankYouVideo.currentTime = 0;
+    }
 }
 
-showDebug("Waiting for GPS location...");
+resetExperience();
 
 
 // ==========================================
@@ -78,19 +86,8 @@ function showThankYouSection() {
 
     arrived = true;
 
-    // Remember confirmed arrival on this device
-    try {
-        localStorage.setItem(arrivalKey, "true");
-    } catch (error) {
-        console.error("Could not save arrival:", error);
-    }
-
+    // Stop GPS after arrival is confirmed
     stopLocationTracking();
-
-    const welcome = document.getElementById("welcomeSection");
-    const thankYou = document.getElementById("thankYouSection");
-
-    const welcomeVideo = document.getElementById("welcomeVideo");
 
     if (!welcome || !thankYou) {
         console.error("Welcome or thank-you section not found.");
@@ -102,51 +99,18 @@ function showThankYouSection() {
         welcomeVideo.pause();
     }
 
-    // Switch sections
+    // Reset thank-you video to beginning
+    if (thankYouVideo) {
+        thankYouVideo.pause();
+        thankYouVideo.currentTime = 0;
+    }
+
+    // Display thank-you section
     welcome.style.display = "none";
     thankYou.style.display = "block";
 
     // Thank-you video remains manual play
-
     console.log("Arrival confirmed. Thank-you section displayed.");
-}
-
-
-// ==========================================
-// RESTORE PREVIOUSLY CONFIRMED ARRIVAL
-// ==========================================
-
-function restoreArrival() {
-
-    let savedArrival = false;
-
-    try {
-        savedArrival = localStorage.getItem(arrivalKey) === "true";
-    } catch (error) {
-        console.error("Could not read saved arrival:", error);
-    }
-
-    if (savedArrival) {
-
-        arrived = true;
-
-        stopLocationTracking();
-
-        const welcome = document.getElementById("welcomeSection");
-        const thankYou = document.getElementById("thankYouSection");
-
-        if (welcome && thankYou) {
-
-            welcome.style.display = "none";
-            thankYou.style.display = "block";
-        }
-
-        console.log("Previously confirmed arrival restored.");
-
-        return true;
-    }
-
-    return false;
 }
 
 
@@ -187,6 +151,7 @@ function processLocation(position) {
 
     const accuracy = position.coords.accuracy;
 
+    // Calculate distance from wedding venue
     const distance = calculateDistance(
         guestLat,
         guestLng,
@@ -194,24 +159,11 @@ function processLocation(position) {
         venueLng
     );
 
-    console.log("Guest latitude:", guestLat);
-    console.log("Guest longitude:", guestLng);
-    console.log("Distance from venue:", Math.round(distance), "metres");
-    console.log("GPS accuracy:", Math.round(accuracy), "metres");
+    // GPS information stays inside the browser
+    // and is not displayed or saved.
+    console.log("GPS accuracy:", accuracy, "metres");
 
-    showDebug(
-        "GPS: Active\n" +
-        "Latitude: " + guestLat + "\n" +
-        "Longitude: " + guestLng + "\n" +
-        "Distance: " + Math.round(distance) + " metres\n" +
-        "Accuracy: " + Math.round(accuracy) + " metres\n" +
-        "Arrival radius: " + arrivalDistance + " metres\n" +
-        "Status: " +
-        (distance <= arrivalDistance
-            ? "Within arrival radius"
-            : "Outside arrival radius")
-    );
-
+    // Check whether guest is within 100 metres
     if (distance <= arrivalDistance) {
 
         showThankYouSection();
@@ -225,33 +177,28 @@ function processLocation(position) {
 
 function handleLocationError(error) {
 
-    console.error("GPS error:", error.code, error.message);
-
-    let errorMessage = "";
+    console.error(
+        "GPS error:",
+        error.code,
+        error.message
+    );
 
     if (error.code === 1) {
 
-        errorMessage = "Permission denied. Allow location access in Chrome.";
+        console.error("Location permission denied.");
 
     } else if (error.code === 2) {
 
-        errorMessage = "Position unavailable. Phone could not obtain GPS location.";
+        console.error("Position unavailable.");
 
     } else if (error.code === 3) {
 
-        errorMessage = "GPS request timed out. Waiting for another location result.";
+        console.error("GPS request timed out.");
 
     } else {
 
-        errorMessage = "Unknown GPS error: " + error.message;
+        console.error("Unknown GPS error.");
     }
-
-    showDebug(
-        "GPS: ERROR\n\n" +
-        errorMessage +
-        "\n\nError code: " + error.code +
-        "\n\nWaiting for another location update..."
-    );
 }
 
 
@@ -265,14 +212,10 @@ function startLocationTracking() {
 
     if (!navigator.geolocation) {
 
-        showDebug("GPS ERROR\n\nThis browser does not support location services.");
-
         console.error("Geolocation is not supported.");
 
         return;
     }
-
-    showDebug("Waiting for GPS location...");
 
     watchId = navigator.geolocation.watchPosition(
 
@@ -303,7 +246,9 @@ function startLocationTracking() {
 
 function refreshLocation() {
 
-    if (restoreArrival()) return;
+    // Preserve thank-you section after arrival
+    // during the same QR experience.
+    if (arrived) return;
 
     stopLocationTracking();
 
@@ -315,26 +260,29 @@ function refreshLocation() {
 // OPEN GOOGLE MAPS
 // ==========================================
 
-mapBtn.addEventListener("click", function() {
+if (mapBtn) {
 
-    const mapUrl =
-        "https://www.google.com/maps/dir/?api=1&destination=" +
-        encodeURIComponent(venue);
+    mapBtn.addEventListener("click", function() {
 
-    // Open Maps in the same tab
-    window.location.href = mapUrl;
+        const mapUrl =
+            "https://www.google.com/maps/dir/?api=1&destination=" +
+            encodeURIComponent(venue);
 
-});
+        // Open Maps in the same tab
+        window.location.href = mapUrl;
+
+    });
+}
 
 
 // ==========================================
 // INITIAL PAGE LOAD
 // ==========================================
 
-if (!restoreArrival()) {
+// Every fresh page load starts a new GPS check.
+// No previous arrival status is restored.
 
-    startLocationTracking();
-}
+startLocationTracking();
 
 
 // ==========================================

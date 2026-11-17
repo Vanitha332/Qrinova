@@ -1,15 +1,7 @@
 
 /* ==========================================
-   QRINOVA - ROMANTIC WEDDING DESIGN
-========================================== */
-
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap');
-
-
-/* ==========================================
-   GLOBAL DESIGN
-========================================== */
+   QRINOVA - ROYAL FLORAL WEDDING DESIGN
+   ========================================== */
 
 * {
     margin: 0;
@@ -17,376 +9,322 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     min-height: 100vh;
-    font-family: 'Poppins', sans-serif;
-
-    background:
-        radial-gradient(circle at top left, #ffe0eb, transparent 35%),
-        radial-gradient(circle at bottom right, #fbd5e5, transparent 35%),
-        linear-gradient(135deg, #fff8fb, #fff0f5, #ffffff);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 35px 15px;
+    padding: 35px 20px;
     overflow-x: hidden;
     position: relative;
+
+    font-family: Georgia, "Times New Roman", serif;
+    color: #783746;
+
+    background:
+        radial-gradient(ellipse at center, #fffaf5, #f9e7e5);
 }
 
-
-/* ==========================================
-   FLOWERS AROUND THE PAGE
-========================================== */
-
+/* Detailed floral artwork */
 body::before {
-    content: "🌸\A 🌷\A 🌺\A 🌼\A 🌸\A 🌷\A 🌺\A 🌼";
-
-    white-space: pre;
-    position: fixed;
-
-    left: 12px;
-    top: 5%;
-
-    font-size: 30px;
-    line-height: 2.1;
-
-    opacity: 0.75;
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    min-height: 100%;
     pointer-events: none;
 
-    animation: flowerFloat 5s ease-in-out infinite alternate;
-
-    z-index: 0;
+    background-image: url("qrinova-floral-frame.svg");
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100% 100%;
 }
-
-body::after {
-    content: "🌷\A 🌸\A 🌼\A 🌺\A 🌷\A 🌸\A 🌼\A 🌺";
-
-    white-space: pre;
-    position: fixed;
-
-    right: 12px;
-    top: 5%;
-
-    font-size: 30px;
-    line-height: 2.1;
-
-    opacity: 0.75;
-    pointer-events: none;
-
-    animation: flowerFloat 6s ease-in-out infinite alternate-reverse;
-
-    z-index: 0;
-}
-
 
 /* ==========================================
-   MAIN CONTAINER
-========================================== */
+   MAIN CONTENT
+   ========================================== */
 
 .container {
     position: relative;
-    z-index: 2;
+    z-index: 1;
 
     width: 100%;
-    max-width: 650px;
-
-    padding: 40px 30px;
-
-    background: rgba(255, 255, 255, 0.88);
-
-    border: 2px solid #ffd2e2;
-    border-radius: 28px;
-
-    box-shadow:
-        0 15px 45px rgba(214, 105, 145, 0.16),
-        0 0 25px rgba(255, 182, 193, 0.15);
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 45px 45px 55px;
 
     text-align: center;
 
-    animation: pageAppear 1.2s ease;
+    background: rgba(255, 250, 244, 0.83);
+
+    border: 2px solid #c69b52;
+    outline: 1px solid #e4c98e;
+    outline-offset: 5px;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 12px 40px rgba(115, 57, 65, 0.12),
+        inset 0 0 35px rgba(222, 186, 139, 0.12);
 }
 
+/* Inner gold border */
+.container::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(190, 145, 75, 0.55);
+    pointer-events: none;
+}
 
 /* ==========================================
-   WELCOME HEADING
-========================================== */
+   WELCOME SECTION
+   ========================================== */
+
+#welcomeSection {
+    position: relative;
+    padding-top: 20px;
+}
+
+/* Qrinova decorative heading */
+#welcomeSection::before {
+    content: "♕  Qrinova  ♕";
+    display: block;
+    margin-bottom: 16px;
+
+    color: #a8782d;
+    font-family: Georgia, serif;
+    font-size: clamp(25px, 4vw, 38px);
+    font-style: italic;
+    letter-spacing: 3px;
+    text-shadow: 1px 2px 2px rgba(166, 116, 49, 0.15);
+}
 
 h1 {
-    font-family: 'Great Vibes', cursive;
+    margin: 15px 0 18px;
 
-    font-size: 48px;
+    color: #87364b;
+    font-family: Georgia, serif;
+    font-size: clamp(32px, 5.5vw, 58px);
     font-weight: normal;
+    font-style: italic;
+    line-height: 1.2;
 
-    color: #c64d7b;
-
-    margin-bottom: 15px;
-
-    text-shadow: 2px 3px 8px rgba(255, 150, 190, 0.25);
+    text-shadow: 1px 2px 3px rgba(120, 55, 70, 0.12);
 }
-
-
-/* ==========================================
-   THANK YOU HEADING
-========================================== */
-
-h2 {
-    font-family: 'Great Vibes', cursive;
-
-    font-size: 43px;
-    font-weight: normal;
-
-    color: #c64d7b;
-
-    margin-bottom: 20px;
-}
-
-
-/* ==========================================
-   PARAGRAPH
-========================================== */
 
 p {
-    color: #795563;
+    max-width: 650px;
+    margin: 0 auto 28px;
 
-    font-size: 15px;
+    color: #80545b;
+    font-size: clamp(15px, 2vw, 20px);
     line-height: 1.8;
-
-    margin-bottom: 25px;
 }
 
+/* Gold divider */
+p::before,
+p::after {
+    color: #bd914c;
+}
 
 /* ==========================================
    VIDEO DESIGN
-========================================== */
+   ========================================== */
 
 video {
     display: block;
 
     width: 100%;
-    max-height: 360px;
+    max-width: 760px;
+    max-height: 75vh;
+
+    margin: 28px auto;
 
     object-fit: contain;
+    background: #2d1720;
 
-    background: #fff0f5;
-
-    border: 4px solid #f7c2d5;
-    border-radius: 20px;
+    border: 5px solid #d2a75f;
+    border-radius: 12px;
 
     box-shadow:
-        0 8px 25px rgba(198, 77, 123, 0.18);
-
-    margin: 20px auto;
+        0 8px 24px rgba(91, 48, 53, 0.2),
+        0 0 0 4px #fff8e9,
+        0 0 0 6px #d6b77e;
 }
-
 
 /* ==========================================
    NAVIGATION BUTTON
-========================================== */
+   ========================================== */
 
 button {
     display: inline-block;
 
-    margin-top: 22px;
-    padding: 15px 28px;
+    width: auto;
+    max-width: 100%;
 
-    background: linear-gradient(135deg, #e978a1, #c94f80);
+    margin: 25px auto 15px;
+    padding: 17px 34px;
 
-    color: white;
+    color: #fff4dc;
+    background: linear-gradient(
+        135deg,
+        #681c35,
+        #a13e59,
+        #681c35
+    );
 
-    border: none;
-    border-radius: 50px;
+    border: 2px solid #e3bd73;
+    border-radius: 45px;
 
-    font-family: 'Poppins', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
+    font-family: Georgia, serif;
+    font-size: clamp(15px, 2vw, 20px);
+    letter-spacing: 0.5px;
 
     cursor: pointer;
 
-    box-shadow: 0 7px 20px rgba(201, 79, 128, 0.3);
+    box-shadow:
+        0 5px 15px rgba(95, 34, 52, 0.25),
+        inset 0 1px 3px rgba(255, 255, 255, 0.25);
 
     transition: all 0.3s ease;
 }
 
 button:hover {
-    transform: translateY(-4px);
+    background: linear-gradient(
+        135deg,
+        #501329,
+        #812d48,
+        #501329
+    );
 
-    background: linear-gradient(135deg, #d85d8d, #b93c70);
+    transform: translateY(-3px);
 
-    box-shadow: 0 10px 25px rgba(201, 79, 128, 0.4);
+    box-shadow:
+        0 9px 20px rgba(95, 34, 52, 0.3);
 }
 
 button:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
-
 
 /* ==========================================
-   FLOATING HEART DECORATION
-========================================== */
+   THANK-YOU SECTION
+   ========================================== */
 
-.container::before {
-    content: "♡  ♥  ♡  ♥  ♡";
-
-    display: block;
-
-    color: #ed8bab;
-
-    font-size: 23px;
-    letter-spacing: 10px;
-
-    margin-bottom: 18px;
-
-    animation: heartBeat 2s ease-in-out infinite;
-}
-
-.container::after {
-    content: "🌸  💗  🌸";
-
-    display: block;
-
-    font-size: 23px;
-
-    margin-top: 25px;
-
-    animation: heartBeat 2.5s ease-in-out infinite;
-}
-
-
-/* ==========================================
-   FLOWER ANIMATION
-========================================== */
-
-@keyframes flowerFloat {
-
-    from {
-        transform: translateY(0px) rotate(-5deg);
-    }
-
-    to {
-        transform: translateY(18px) rotate(5deg);
-    }
-}
-
-
-/* ==========================================
-   HEART ANIMATION
-========================================== */
-
-@keyframes heartBeat {
-
-    0%, 100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.08);
-    }
-}
-
-
-/* ==========================================
-   PAGE APPEAR ANIMATION
-========================================== */
-
-@keyframes pageAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* ==========================================
-   GPS DIAGNOSTIC BOX
-   TEMPORARY - FOR TESTING ONLY
-========================================== */
-
-.container > div[style*="background: rgb(241"] {
+#thankYouSection {
     position: relative;
-    z-index: 3;
-    border: 1px solid #e9bfd0;
-    border-radius: 15px;
+    padding: 35px 0 10px;
 }
 
+h2 {
+    margin: 15px auto 25px;
+
+    color: #87364b;
+    font-family: Georgia, serif;
+    font-size: clamp(29px, 5vw, 48px);
+    font-weight: normal;
+    font-style: italic;
+    line-height: 1.3;
+}
 
 /* ==========================================
    MOBILE RESPONSIVE DESIGN
-========================================== */
+   ========================================== */
 
-@media (max-width: 600px) {
+@media screen and (max-width: 600px) {
 
     body {
-        padding: 25px 12px;
+        padding: 18px 12px;
     }
 
     .container {
-        padding: 30px 18px;
-        border-radius: 22px;
-    }
-
-    h1 {
-        font-size: 39px;
-    }
-
-    h2 {
-        font-size: 35px;
-    }
-
-    p {
-        font-size: 14px;
-    }
-
-    video {
-        max-height: 260px;
-    }
-
-    button {
-        width: 100%;
-        padding: 14px 15px;
-        font-size: 14px;
-    }
-
-    body::before,
-    body::after {
-        font-size: 20px;
-        line-height: 2.5;
-        opacity: 0.55;
+        padding: 38px 17px 30px;
+        outline-offset: 3px;
+        border-width: 1.5px;
     }
 
     .container::before {
-        font-size: 19px;
-        letter-spacing: 6px;
+        inset: 7px;
     }
 
-    .container::after {
-        font-size: 19px;
+    #welcomeSection {
+        padding-top: 18px;
     }
-}
 
-
-/* ==========================================
-   SMALL MOBILE SCREENS
-========================================== */
-
-@media (max-width: 360px) {
+    #welcomeSection::before {
+        font-size: 25px;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+    }
 
     h1 {
-        font-size: 33px;
+        font-size: clamp(29px, 8vw, 40px);
+        line-height: 1.25;
+        margin: 14px 0;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    video {
+        width: 100%;
+        max-height: 65vh;
+        margin: 22px auto;
+        border-width: 3px;
+        border-radius: 8px;
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        padding: 15px 10px;
+        margin: 20px auto 12px;
+        font-size: 16px;
+    }
+
+    #thankYouSection {
+        padding-top: 25px;
     }
 
     h2 {
-        font-size: 30px;
+        font-size: clamp(26px, 7vw, 35px);
+        margin-bottom: 20px;
+    }
+}
+
+/* ==========================================
+   VERY SMALL PHONES
+   ========================================== */
+
+@media screen and (max-width: 360px) {
+
+    body {
+        padding: 12px 9px;
     }
 
     .container {
-        padding: 25px 14px;
+        padding: 32px 13px 24px;
+    }
+
+    #welcomeSection::before {
+        font-size: 22px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    h2 {
+        font-size: 25px;
+    }
+
+    button {
+        font-size: 14px;
     }
 }
